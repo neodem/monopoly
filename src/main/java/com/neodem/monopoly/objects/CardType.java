@@ -7,6 +7,12 @@ package com.neodem.monopoly.objects;
 public enum CardType {
     BASIC,
     ADV_GO,
-
-    ADV_ILLINOIS, ADV_STCHARLES, ADV_RAILROAD, ADV_UTILITY, ADV_3, ADV_JAIL, ADV_READING, ADV_BOARDWALK
+    ADV_ILLINOIS,
+    ADV_STCHARLES,
+    ADV_RAILROAD,
+    ADV_UTILITY,
+    ADV_3,
+    ADV_JAIL,
+    ADV_READING,
+    ADV_BOARDWALK
 }

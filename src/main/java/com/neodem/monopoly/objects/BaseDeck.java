@@ -1,6 +1,7 @@
 package com.neodem.monopoly.objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,13 +17,16 @@ public abstract class BaseDeck {
     }
 
     protected void shuffle() {
-
+        Collections.shuffle(deck);
     }
 
     /*
     will return a copy of the card and put the actual card on the bottom of the deck
      */
     protected Card getNextCard() {
-        return null;
+        Card card = deck.get(0);
+        deck.remove(0);
+        deck.add(card);
+        return card;
     }
 }

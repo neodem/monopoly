@@ -1,8 +1,6 @@
 package com.neodem.monopoly.objects;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,9 @@ import java.util.Map;
  * Created on : 5/10/23
  */
 public class Board {
+
+    private final BaseDeck chanceDeck = new ChanceDeck();
+    private final BaseDeck communityDeck = new CommunityDeck();
 
     /**
      * the spaces
@@ -90,23 +91,66 @@ public class Board {
      * this does not consider chance/community chest/go to jail/etc (yet)
      *
      * @param player
-     * @param spaces
+     * @param spacesToMove
      * @return
      */
-    public Space playerMove(Player player, int spaces) {
+    public Space playerMove(Player player, int spacesToMove) {
         Space currentSpace = playerLocation.get(player);
 
         // is player in jail?
 
         int index = orderedSpaces.get(currentSpace);
-        int newLocation = index + spaces;
+        int newLocation = index + spacesToMove;
         if (newLocation > 39) newLocation = newLocation - 40;
         Space newSpace = spacesInLocations.get(newLocation);
 
         // check if newSpace is chance/community chest
+        if (
+                newSpace.spaceName() == SpaceName.Chance1 || newSpace.spaceName() == SpaceName.Chance2 || newSpace.spaceName() == SpaceName.Chance3
+        ) {
+            Card nextCard = chanceDeck.getNextCard();
+            newSpace = handleCard(newSpace, nextCard);
+        } else if (
+                newSpace.spaceName() == SpaceName.CommunityChest1 || newSpace.spaceName() == SpaceName.CommunityChest2 || newSpace.spaceName() == SpaceName.CommunityChest3
+        ) {
+            Card nextCard = communityDeck.getNextCard();
+            newSpace = handleCard(newSpace, nextCard);
+        }
         // check if newSpace is goToJail
 
         movePlayerTo(player, newSpace);
+        return newSpace;
+    }
+
+    private Space handleCard(Space newSpace, Card nextCard) {
+        if (nextCard.type() != CardType.BASIC) {
+            switch (nextCard.type()) {
+                case ADV_GO:
+                    newSpace = spaces.get(SpaceName.Go);
+                    break;
+                case ADV_ILLINOIS:
+                    newSpace = spaces.get(SpaceName.Illinois);
+                    break;
+                case ADV_STCHARLES:
+                    newSpace = spaces.get(SpaceName.StCharles);
+                    break;
+                case ADV_RAILROAD:
+                    break;
+                case ADV_UTILITY:
+                    break;
+                case ADV_3:
+                    break;
+                case ADV_JAIL:
+                    newSpace = spaces.get(SpaceName.Jail);
+                    break;
+                case ADV_READING:
+                    newSpace = spaces.get(SpaceName.ReadingRR);
+                    break;
+                case ADV_BOARDWALK:
+                    newSpace = spaces.get(SpaceName.Boardwalk);
+                    break;
+            }
+        }
         return newSpace;
     }
 
