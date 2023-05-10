@@ -19,11 +19,20 @@ public class BasicEngine implements Engine {
         dice = new Dice();
     }
 
+    private final int TURNS = 10000;
+
     @Override
     public void start() {
         Player player = new Player("player");
         board.addPlayer(player);
 
+        for(int i=0; i<TURNS; i++)
+            movePlayer(player);
+
+        board.report();
+    }
+
+    private void movePlayer(Player player) {
         dice.roll();
         int spaces = dice.spaces();
 

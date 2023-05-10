@@ -1,6 +1,10 @@
 package com.neodem.monopoly.objects;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -84,17 +88,40 @@ public class Board {
 
     /**
      * this does not consider chance/community chest/go to jail/etc (yet)
+     *
      * @param player
      * @param spaces
      * @return
      */
     public Space playerMove(Player player, int spaces) {
         Space currentSpace = playerLocation.get(player);
+
+        // is player in jail?
+
         int index = orderedSpaces.get(currentSpace);
         int newLocation = index + spaces;
         if (newLocation > 39) newLocation = newLocation - 40;
         Space newSpace = spacesInLocations.get(newLocation);
-        playerLocation.put(player, newSpace);
+
+        // check if newSpace is chance/community chest
+        // check if newSpace is goToJail
+
+        movePlayerTo(player, newSpace);
         return newSpace;
+    }
+
+    private void movePlayerTo(Player player, Space newSpace) {
+        playerLocation.put(player, newSpace);
+        Integer index = spaceHitCount.get(newSpace);
+        spaceHitCount.put(newSpace, index + 1);
+    }
+
+    public void report() {
+        List<Map.Entry<Space, Integer>> list = new ArrayList<>(spaceHitCount.entrySet());
+        list.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+
+        for (Map.Entry<Space, Integer> e : list) {
+            System.out.printf("%s : %d%n", e.getKey().spaceName(), e.getValue());
+        }
     }
 }
